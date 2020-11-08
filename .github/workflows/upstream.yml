@@ -47,4 +47,20 @@ jobs:
           pr_body: "*An automated PR for Release Train Branch ${{ matrix.upstream_release }} * "
           pr_reviewer: "mluedke2,sejalbiren"
           pr_assignee: "mluedke2,sejalbiren"
+  pull-request-develop:
+    name: Pull Request to Develop Branch
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: ${{  github.head_ref }}
+          destination_branch: develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_title: "Pulling ${{ github.ref }} into develop "
+          pr_body: "*An automated PR for Develop Branch * "
+          pr_reviewer: "mluedke2,sejalbiren"
+          pr_assignee: "mluedke2,sejalbiren"
 
