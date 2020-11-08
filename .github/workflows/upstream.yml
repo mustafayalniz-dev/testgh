@@ -1,0 +1,50 @@
+---
+name: Create upstream pull request
+on:
+  pull_request:
+    branches:
+      - release_*
+    types: [closed]
+
+jobs:
+  generate-matrix:
+    name: Generate matrix for pull requests
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+      - run: git config user.name github-actions
+      - run: git config user.email github-actions@github.com
+      - name: Set matrix for build
+        id: set-matrix
+        run: |
+          (( $(( (`date +\%s` / 604800 + 1) % 2 )) )) && node scripts/upstream_list.js ${{ github.base_ref }} ${{  github.head_ref }}
+          echo "::set-output name=matrix::$( node scripts/upstream_list.js ${{ github.base_ref }} )"
+  pull-request:
+    name: Pull Request to Upstream Release "${{ matrix.upstream_release }}"
+    if: github.event.pull_request.merged == true
+    needs: generate-matrix
+    strategy:
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: pull-request
+        if:   ${{ matrix.upstream_release }} != ''
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: ${{  github.head_ref }} 
+          destination_branch: ${{ matrix.upstream_release }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_title: "Pulling ${{ github.ref }} into ${{ matrix.upstream_release }} "
+          pr_body: "*An automated PR for Release Train Branch ${{ matrix.upstream_release }} * "
+          pr_reviewer: "mluedke2,sejalbiren"
+          pr_assignee: "mluedke2,sejalbiren"
+
