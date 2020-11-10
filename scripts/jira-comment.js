@@ -78,14 +78,14 @@ async function processCommits() {
 
 }
 
-async function processSingleCommit(branch, id, issueKey,  messsage, url) {
+async function processSingleCommit(branch, id, issueKey,  message, url) {
      headers = await headersWithAuth({ "Content-Type": "application/json" })
 
      var issueComment = {
     	"body": "Commit " + id + " with url: " + url + " has been pushed to branch: " + branch + " with message " + message 
      } 
 
-     console.log("BRANCH=" + branch + "\nSHA=" + id + "\nMESSAGE=" + messsage + "\nURL=" + url)
+     console.log("BRANCH=" + branch + "\nSHA=" + id + "\nMESSAGE=" + message + "\nURL=" + url)
      console.log(-issueComment)
 }
 
