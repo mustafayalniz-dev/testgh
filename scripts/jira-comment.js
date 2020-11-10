@@ -9,9 +9,7 @@ var commits = process.argv.slice(2)
 
 const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
 
-console.log(event)
-
-return 
+//console.log(event)
 
 if (currentBranch === "") {
   console.log("You need to give current branch")
@@ -48,7 +46,8 @@ async function postPayloadToAdmin() {
   headers = await headersWithAuth({ "Content-Type": "application/json" }),
 
   console.log(headers)
- 
+
+//  console.log(event.commits) 
   for (var key in event.commits) {
     if (statuses.includes(event.commits[key].id)) {
 	console.log("id = " + id )
