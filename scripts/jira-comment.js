@@ -7,7 +7,7 @@ const readFile = promisify(fs.readFile)
 
 var commits = process.argv.slice(2)
 
-const event = JSON.parse(fs.readFileSync('/github/workflow/event.json', 'utf8'))
+const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
 
 console.log(event)
 
