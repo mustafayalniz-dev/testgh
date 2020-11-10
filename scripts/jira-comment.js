@@ -55,15 +55,19 @@ async function processCommits() {
 
   var branch = event.ref.replace("refs/heads/", "")
 
+  var id = ""
+  var message = ""
+  var url = ""
+
   for (var key in event.commits) {
     if (event.commits[key].id) {
-        var id = event.commits[key].id 
+        id = event.commits[key].id 
     }
     if (event.commits[key].message) {
-        var message =  event.commits[key].message
+        message =  event.commits[key].message
     }
     if (event.commits[key].url) {
-        var url = event.commits[key].url
+        url = event.commits[key].url
     }
     await processSingleCommit(branch, id, messsage, url)
   }
