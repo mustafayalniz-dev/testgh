@@ -2,7 +2,7 @@ name: Create upstream pull request
 on:
   push:
     branches:
-      - *
+      - "*"
 
 jobs:
   push:
