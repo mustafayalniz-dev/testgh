@@ -39,8 +39,6 @@ async function headersWithAuth(headers) {
 
 async function postPayloadToAdmin() {
 
-  console.log(headers)
-
   await processCommits()
 
 //  return await fetch(webAdminPushUrl, {
