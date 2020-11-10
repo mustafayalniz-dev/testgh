@@ -11,11 +11,6 @@ const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
 
 //console.log(event)
 
-if (currentBranch === "") {
-  console.log("You need to give current branch")
-  return 1
-}
-
 const baseUrl="https://spinbikes.atlassian.net"
 const jqlSearchBaseUrl="/rest/api/2/search/?jql="
 const issueBaseUrl="/rest/api/2/issue/"
