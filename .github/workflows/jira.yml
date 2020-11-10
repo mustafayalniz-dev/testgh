@@ -17,4 +17,5 @@ jobs:
           npm install node-fetch
           npm install fs
           npm install util.promisify
+          npm install dotenv
           node scripts/jira-comment.js
