@@ -69,7 +69,7 @@ async function processCommits() {
     if (event.commits[key].url) {
         url = event.commits[key].url
     }
-    await processSingleCommit(branch, id, messsage, url)
+    await processSingleCommit(branch, id, message, url)
   }
 
 }
