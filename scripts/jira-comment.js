@@ -42,21 +42,7 @@ async function postPayloadToAdmin() {
 
   console.log(headers)
 
-//  console.log(event.commits) 
-  for (var key in event.commits) {
-    if (event.commits[key].id) {
-	console.log("id = " + event.commits[key].id )
-    }
-    if (event.commits[key].message) {
-        console.log("message = " + event.commits[key].message )
-    }
-    if (event.commits[key].url) {
-        console.log("url = " + event.commits[key].url )
-    }
-  }
-
-  console.log("REF = " + event.ref)
-
+  await processCommits()
 
 //  return await fetch(webAdminPushUrl, {
 //    method: "post",
@@ -65,5 +51,26 @@ async function postPayloadToAdmin() {
 //  })
 }
 
+async function processCommits() {
 
+  var branch = event.ref.replace("refs/heads/", "")
+
+  for (var key in event.commits) {
+    if (event.commits[key].id) {
+        var id = event.commits[key].id 
+    }
+    if (event.commits[key].message) {
+        var message =  event.commits[key].message
+    }
+    if (event.commits[key].url) {
+        var url = event.commits[key].url
+    }
+    await processSingleCommit(branch, id, messsage, url)
+  }
+
+}
+
+async function processSingleCommit(branch, id, messsage, url) {
+	console.log("BRANCH : " + branch + "\nSHA=" + id + "\nMESSAGE=" + messsage + "\nURL=" + url)
+}
 
