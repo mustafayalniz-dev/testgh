@@ -48,6 +48,21 @@ async function postPayloadToAdmin() {
   headers = await headersWithAuth({ "Content-Type": "application/json" }),
 
   console.log(headers)
+ 
+  for (var key in event.commits) {
+    if (statuses.includes(event.commits[key].id)) {
+	console.log("id = " + id )
+    }
+    if (statuses.includes(event.commits[key].message)) {
+        console.log("message = " + message )
+    }
+    if (statuses.includes(event.commits[key].url)) {
+        console.log("url = " + url )
+    }
+  }
+
+  console.log("REF = " + event.ref)
+
 
 //  return await fetch(webAdminPushUrl, {
 //    method: "post",
