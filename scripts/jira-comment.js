@@ -5,7 +5,13 @@ const fs = require("fs")
 const dotenv = require("dotenv")
 const readFile = promisify(fs.readFile)
 
-var currentBranch = process.argv.slice(2)[0]
+var commits = process.argv.slice(2)
+
+const event = JSON.parse(fs.readFileSync('/github/workflow/event.json', 'utf8'))
+
+console.log(event)
+
+return 
 
 if (currentBranch === "") {
   console.log("You need to give current branch")
