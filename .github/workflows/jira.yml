@@ -14,4 +14,4 @@ jobs:
         uses: hmarr/debug-action@v1.0.0
       - name: Merge to Master and Create GitHub Release
         run: |
-          node scripts/jira.js
+          node scripts/jira-comment.js
