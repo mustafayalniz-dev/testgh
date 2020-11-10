@@ -38,7 +38,6 @@ async function headersWithAuth(headers) {
 }
 
 async function postPayloadToAdmin() {
-  headers = await headersWithAuth({ "Content-Type": "application/json" }),
 
   console.log(headers)
 
@@ -55,9 +54,12 @@ async function processCommits() {
 
   var branch = event.ref.replace("refs/heads/", "")
 
+  var issueIdRegex = new RegExp("^\[[A-Z]+\.[0-9]+\].+$")
+
   var id = ""
   var message = ""
   var url = ""
+  var issueKey= ""
 
   for (var key in event.commits) {
     if (event.commits[key].id) {
@@ -69,12 +71,22 @@ async function processCommits() {
     if (event.commits[key].url) {
         url = event.commits[key].url
     }
-    await processSingleCommit(branch, id, message, url)
+    if (issueIdRegex.test(message)) {
+      issueKey=message.replace(/^\[([A-Z]+\.[0-9]+)\].+$/, "$1")
+      await processSingleCommit(branch, id, issueKey, message, url)
+    }
   }
 
 }
 
-async function processSingleCommit(branch, id, messsage, url) {
-	console.log("BRANCH : " + branch + "\nSHA=" + id + "\nMESSAGE=" + messsage + "\nURL=" + url)
+async function processSingleCommit(branch, id, issueKey,  messsage, url) {
+     headers = await headersWithAuth({ "Content-Type": "application/json" })
+
+     var issueComment = {
+    	"body": "Commit " + id + " with url: " + url + " has been pushed to branch: " + branch + " with message " + message 
+     } 
+
+     console.log("BRANCH=" + branch + "\nSHA=" + id + "\nMESSAGE=" + messsage + "\nURL=" + url)
+     console.log(-issueComment)
 }
 
