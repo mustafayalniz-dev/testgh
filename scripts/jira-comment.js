@@ -86,6 +86,6 @@ async function processSingleCommit(branch, id, issueKey,  message, url) {
      } 
 
      console.log("BRANCH=" + branch + "\nSHA=" + id + "\nMESSAGE=" + message + "\nURL=" + url)
-     console.log(-issueComment)
+     console.log(issueComment)
 }
 
