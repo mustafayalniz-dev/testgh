@@ -44,13 +44,13 @@ async function postPayloadToAdmin() {
 
 //  console.log(event.commits) 
   for (var key in event.commits) {
-    if (statuses.includes(event.commits[key].id)) {
+    if (event.commits[key].id) {
 	console.log("id = " + id )
     }
-    if (statuses.includes(event.commits[key].message)) {
+    if (event.commits[key].message) {
         console.log("message = " + message )
     }
-    if (statuses.includes(event.commits[key].url)) {
+    if (event.commits[key].url) {
         console.log("url = " + url )
     }
   }
