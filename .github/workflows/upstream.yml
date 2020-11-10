@@ -58,7 +58,7 @@ jobs:
           source_branch: ${{  github.head_ref }}
           destination_branch: develop
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          pr_title: "Pulling ${{ github.ref }} into develop "
+          pr_title: "Pulling ${{ github.head_ref }} into develop "
           pr_body: "*An automated PR for Develop Branch * "
           pr_reviewer: ${{ matrix.reviewers }}
           pr_assignee: ${{ matrix.assignees }}
