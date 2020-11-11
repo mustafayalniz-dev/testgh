@@ -72,6 +72,7 @@ async function processCommits() {
     }
     if (issueIdRegex.test(message)) {
       issueKey=message.replace(/^\[([A-Z]+\.[0-9]+)\].+$/, "$1")
+      console.log("issueKey " + issueKey )
       await processSingleCommit(branch, id, issueKey, message, url)
     }
   }
