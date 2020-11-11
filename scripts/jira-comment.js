@@ -17,7 +17,7 @@ const browseUrl="/browse/"
 
 async function main() {
     await loadJiraCredentials()
-    await postPayloadToAdmin()
+    await processCommits()
 }
 
 main()
@@ -35,40 +35,23 @@ async function headersWithAuth(headers) {
     return Object.assign(headers, { Authorization: auth })
 }
 
-async function postPayloadToAdmin() {
-
-  await processCommits()
-
-//  return await fetch(webAdminPushUrl, {
-//    method: "post",
-//    body: JSON.stringify(requestBody),
-//    headers: headersToSend,
-//  })
-}
-
 async function processCommits() {
 
   var branch = event.ref.replace("refs/heads/", "")
-
   var issueIdRegex = new RegExp("^\[[A-Z]+\-[0-9]+\].+$")
-
-  var id = ""
-  var message = ""
-  var url = ""
-  var issueKey= ""
 
   for (var key in event.commits) {
     if (event.commits[key].id) {
-        id = event.commits[key].id 
+        var id = event.commits[key].id 
     }
     if (event.commits[key].message) {
-        message =  event.commits[key].message
+        var message =  event.commits[key].message
     }
     if (event.commits[key].url) {
-        url = event.commits[key].url
+        var url = event.commits[key].url
     }
     if (issueIdRegex.test(message)) {
-      issueKey=message.replace(/^\[([A-Z]+\-[0-9]+)\].+$/, "$1")
+      var issueKey=message.replace(/^\[([A-Z]+\-[0-9]+)\].+$/, "$1")
       console.log("issueKey " + issueKey )
       await processSingleCommit(branch, id, issueKey, message, url)
     }
@@ -92,7 +75,7 @@ async function processSingleCommit(branch, id, issueKey,  message, url) {
 
      console.log(jiraPushUrl)
 
-//     return await fetch(webAdminPushUrl, {
+//     return await fetch(jiraPushUrl, {
 //       method: "post",
 //       body: JSON.stringify(requestBody),
 //       headers: headersToSend,
