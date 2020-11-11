@@ -9,8 +9,6 @@ var commits = process.argv.slice(2)
 
 const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
 
-//console.log(event)
-
 const baseUrl="https://spinbikes.atlassian.net"
 const jqlSearchBaseUrl="/rest/api/2/search/?jql="
 const issueBaseUrl="/rest/api/2/issue/"
