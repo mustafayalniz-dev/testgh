@@ -1,7 +1,7 @@
 name: Create upstream pull request
 
 on:
-  pull_request:
+  push:
     branches:
       - "release_*"
 
