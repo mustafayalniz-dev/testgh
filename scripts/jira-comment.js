@@ -83,13 +83,22 @@ async function processSingleCommit(branch, id, issueKey,  message, url) {
 
      var repository = url.replace(/\/commit\/.+/, "")
 
-     var body = "Repository: " + repository + "Branch: " + branch + "Commit: " + id + "Commit message: " + message
+     var body = "Repository: " + repository + "\nBranch: " + branch + "\nCommit: " + id + "\nCommit message: " + message
 
      var issueComment = {
     	"body": body 
      } 
 
-     console.log("BRANCH=" + branch + "\nSHA=" + id + "\nMESSAGE=" + message + "\nURL=" + url)
      console.log(issueComment)
+     jiraPushUrl = baseUrl + issueBaseUrl + issueKey + "/comment"
+
+     console.log(jiraPushUrl)
+
+//     return await fetch(webAdminPushUrl, {
+//       method: "post",
+//       body: JSON.stringify(requestBody),
+//       headers: headersToSend,
+//     })
+
 }
 
