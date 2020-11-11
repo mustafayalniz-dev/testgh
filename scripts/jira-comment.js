@@ -53,7 +53,7 @@ async function processCommits() {
 
   var branch = event.ref.replace("refs/heads/", "")
 
-  var issueIdRegex = new RegExp("^\[[A-Z]+\.[0-9]+\].+$")
+  var issueIdRegex = new RegExp("^\[[A-Z]+\-[0-9]+\].+$")
 
   var id = ""
   var message = ""
@@ -71,7 +71,7 @@ async function processCommits() {
         url = event.commits[key].url
     }
     if (issueIdRegex.test(message)) {
-      issueKey=message.replace(/^\[([A-Z]+\.[0-9]+)\].+$/, "$1")
+      issueKey=message.replace(/^\[([A-Z]+\-[0-9]+)\].+$/, "$1")
       console.log("issueKey " + issueKey )
       await processSingleCommit(branch, id, issueKey, message, url)
     }
