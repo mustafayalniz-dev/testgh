@@ -1,8 +1,9 @@
 name: Create upstream pull request
+
 on:
-  push:
+  pull_request:
     branches:
-      - "*"
+      - "release_*"
 
 jobs:
   push:
@@ -11,6 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Jira Processing
+        env:
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
         run: |
           npm install node-fetch
           npm install fs
