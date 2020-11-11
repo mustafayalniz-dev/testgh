@@ -83,7 +83,7 @@ async function processSingleCommit(branch, id, issueKey,  message, url) {
 
      var repository = url.replace(/\/commit\/.+/, "")
 
-     var body = "Repository: " + repository + "\nBranch: " + branch + "\nCommit: " + id + "\nCommit message: " + message
+     var body = "Repository: " + repository + "Branch: " + branch + "Commit: " + id + "Commit message: " + message
 
      var issueComment = {
     	"body": body 
