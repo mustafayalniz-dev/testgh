@@ -1,68 +1,72 @@
-var child_process = require("child_process");
+var child_process = require("child_process")
+var compareVersions = require('compare-versions');
 
 //const GITHUB_REF = process.env.GITHUB_REF
 //const currentBranch = GITHUB_REF.replace("refs/heads/", "")
 
 var currentBranch = process.argv.slice(2)[0]
 
+const reviewers = "../prmeta.json"
+const prMeta = require(reviewers)
 
-if ( currentBranch == "" ) {
-	console.log("You need to give current branch")
-	return 1
+if (currentBranch === "") {
+  console.log("You need to give current branch")
+  return 1
 }
 
-major_version = ('0' + parseInt(currentBranch.replace(/release\_(\d+)\.\d+\.\d+/,'$1'))).slice(-3)
-minor_version = ('0' + parseInt(currentBranch.replace(/release\_\d+\.(\d+)\.\d+/,'$1'))).slice(-3)
-patch_version = ('0' + parseInt(currentBranch.replace(/release\_\d+\.\d+\.(\d+)/,'$1'))).slice(-3)
+const versionNumber = currentBranch.replace(/release\_(\d+\.\d+\.\d+)/, "$1")
 
-var versionNumber = major_version.toString() + minor_version.toString() + patch_version.toString()
 
-async function getBranchArray() { 
-    
-//    var test0 = child_process.execSync('git pull');
-    var test = child_process.execSync('git branch --remote -a | grep release');
-    var branches = test.toString().replace(/remotes\/origin\//g,"").replace(/\s+/g, ' ').trim()
-    var branchArray = branches.split(" ");
-    
-//    console.log(branchArray)
-    return branchArray ;
+async function getBranchArray() {
 
+  var test = child_process.execSync("git branch --remote -a | grep release")
+  var branches = test
+    .toString()
+    .replace(/remotes\/origin\//g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+  var branchArray = branches.split(" ")
+
+  return branchArray
 }
 
 async function getMinorVersionArray(array) {
+  var matrixJson = ""
 
-	var matrixJson = ""
+  var releaseBranchRegex = new RegExp("^release_[0-9]+\.[0-9]+\.[0-9]+$");
 
-	array.forEach(function(item){
-                itemMajor = item.replace(/release\_(\d+)\.\d+\.\d+/,'$1')
-		itemMinor = item.replace(/release\_\d+\.(\d+)\.\d+/,'$1')
-		itemPatch = item.replace(/release\_\d+\.\d+\.(\d+)/,'$1')
-		majorVersionInRemote = ('0' + itemMajor).slice(-3)
-		minorVersionInRemote = ('0' + itemMinor).slice(-3)
-		patchVersionInRemote = ('0' + itemPatch).slice(-3)
-		
-		var versionNumberInRemote = majorVersionInRemote.toString() + minorVersionInRemote.toString() + patchVersionInRemote.toString() 
+  array.forEach(function (item) {
+    if (! releaseBranchRegex.test(item)) {
+	return 
+    }
+    var versionNumberInRemote = item.replace(/release\_(\d+\.\d+\.\d+)/, "$1")
 
-		if ( parseInt(versionNumber) < parseInt(versionNumberInRemote) ) {
-			if ( matrixJson != "")  {  matrixJson = matrixJson + "," }
-			matrixJson = matrixJson + "{ \"upstream_release\": \"" + item + "\" }"
-		}
-	});
+    if ( compareVersions(versionNumber, versionNumberInRemote) === -1 ) {
+      if (matrixJson != "") {
+        matrixJson = matrixJson + ","
+      }
+      matrixJson =
+        matrixJson +
+        '{ "upstream_release": "' +
+        item +
+        '", "reviewers": "' +
+        prMeta.prReviewers +
+        '", "assignees": "' +
+        prMeta.prAssignees +
+        '"  }'
+    }
+  })
 
-	matrixJson = "{ \"include\": [" + matrixJson + "] }"
+  matrixJson = '{ "include": [' + matrixJson + "] }"
 
-	return matrixJson
-
-} 
+  return matrixJson
+}
 
 async function main() {
-    var array = await getBranchArray()
-    var matrix = await getMinorVersionArray(array)
-        
+  var array = await getBranchArray()
+  var matrix = await getMinorVersionArray(array)
 
-    console.log(matrix)
+  console.log(matrix)
 }
 
 main()
-
-

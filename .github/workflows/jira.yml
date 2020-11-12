@@ -1,0 +1,25 @@
+name: Create upstream pull request
+
+on:
+  push:
+    branches:
+      - "release_*"
+
+jobs:
+  push:
+    name: Push Event
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Debug Action
+        uses: hmarr/debug-action@v1.0.0
+      - name: Jira Processing
+        env:
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: |
+          npm install node-fetch
+          npm install fs
+          npm install util.promisify
+          npm install dotenv
+          node scripts/jira-comment.js

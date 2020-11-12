@@ -1,4 +1,3 @@
----
 name: Create upstream pull request
 on:
   pull_request:
@@ -25,9 +24,10 @@ jobs:
       - name: Set matrix for build
         id: set-matrix
         run: |
+          npm install compare-versions
           (( $(( (`date +\%s` / 604800 + 1) % 2 )) )) && node scripts/upstream_list.js ${{ github.base_ref }} ${{  github.head_ref }}
           echo "::set-output name=matrix::$( node scripts/upstream_list.js ${{ github.base_ref }} )"
-  pull-request:
+  merge-upstream-request:
     name: Pull Request to Upstream Release "${{ matrix.upstream_release }}"
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
     needs: generate-matrix
@@ -36,31 +36,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: pull-request
+      - name: Merge ${{  github.head_ref }} -> ${{ matrix.upstream_release }}
         if:   ${{ matrix.upstream_release }} != ''
-        uses: repo-sync/pull-request@v2
+        uses: devmasx/merge-branch@v1.3.1
         with:
-          source_branch: ${{  github.head_ref }} 
-          destination_branch: ${{ matrix.upstream_release }}
+          type: now
+          from_branch: ${{  github.head_ref }}
+          target_branch: ${{ matrix.upstream_release }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          pr_title: "Pulling ${{ github.ref }} into ${{ matrix.upstream_release }} "
-          pr_body: "*An automated PR for Release Train Branch ${{ matrix.upstream_release }} * "
-          pr_reviewer: "mluedke2,sejalbiren"
-          pr_assignee: "mluedke2,sejalbiren"
   pull-request-develop:
     name: Pull Request to Develop Branch
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: pull-request
-        uses: repo-sync/pull-request@v2
+      - name: Merge ${{  github.head_ref }} -> ${{ matrix.upstream_release }}
+        if:   ${{ matrix.upstream_release }} != ''
+        uses: devmasx/merge-branch@v1.3.1
         with:
-          source_branch: ${{  github.head_ref }}
-          destination_branch: develop
+          type: now
+          from_branch: ${{  github.head_ref }}
+          target_branch: develop
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          pr_title: "Pulling ${{ github.ref }} into develop "
-          pr_body: "*An automated PR for Develop Branch * "
-          pr_reviewer: "mluedke2,sejalbiren"
-          pr_assignee: "mluedke2,sejalbiren"
 
