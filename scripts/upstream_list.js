@@ -1,4 +1,5 @@
 var child_process = require("child_process")
+var compareVersions = require('compare-versions');
 
 //const GITHUB_REF = process.env.GITHUB_REF
 //const currentBranch = GITHUB_REF.replace("refs/heads/", "")
@@ -13,14 +14,11 @@ if (currentBranch === "") {
   return 1
 }
 
-const major_version = ("0000" + parseInt(currentBranch.replace(/release\_(\d+)\.\d+\.\d+/, "$1"))).slice(-5)
-const minor_version = ("0000" + parseInt(currentBranch.replace(/release\_\d+\.(\d+)\.\d+/, "$1"))).slice(-5)
-const patch_version = ("0000" + parseInt(currentBranch.replace(/release\_\d+\.\d+\.(\d+)/, "$1"))).slice(-5)
+const versionNumber = currentBranch.replace(/release\_(\d+\.\d+\.\d+)/, "$1")
 
-var versionNumber = major_version.toString() + minor_version.toString() + patch_version.toString()
 
 async function getBranchArray() {
-  //    var test0 = child_process.execSync('git pull');
+
   var test = child_process.execSync("git branch --remote -a | grep release")
   var branches = test
     .toString()
@@ -41,23 +39,9 @@ async function getMinorVersionArray(array) {
     if (! releaseBranchRegex.test(item)) {
 	return 
     }
-    var itemMajor = item.replace(/release\_(\d+)\.\d+\.\d+/, "$1")
-    var itemMinor = item.replace(/release\_\d+\.(\d+)\.\d+/, "$1")
-    var itemPatch = item.replace(/release\_\d+\.\d+\.(\d+)/, "$1")
-    var majorVersionInRemote = ("0000" + itemMajor).slice(-5)
-    var minorVersionInRemote = ("0000" + itemMinor).slice(-5)
-    var patchVersionInRemote = ("0000" + itemPatch).slice(-5)
+    var versionNumberInRemote = item.replace(/release\_(\d+\.\d+\.\d+)/, "$1")
 
-    var versionNumberInRemote =
-      majorVersionInRemote.toString() +
-      minorVersionInRemote.toString() +
-      patchVersionInRemote.toString()
-
-    if ( isNaN( parseInt(versionNumberInRemote) ) ) {
-        return
-    }
-
-    if (parseInt(versionNumber) < parseInt(versionNumberInRemote)) {
+    if ( compareVersions(versionNumber, versionNumberInRemote) === -1 ) {
       if (matrixJson != "") {
         matrixJson = matrixJson + ","
       }
