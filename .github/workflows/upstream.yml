@@ -24,6 +24,7 @@ jobs:
       - name: Set matrix for build
         id: set-matrix
         run: |
+          npm install compare-versions
           (( $(( (`date +\%s` / 604800 + 1) % 2 )) )) && node scripts/upstream_list.js ${{ github.base_ref }} ${{  github.head_ref }}
           echo "::set-output name=matrix::$( node scripts/upstream_list.js ${{ github.base_ref }} )"
   pull-request:
