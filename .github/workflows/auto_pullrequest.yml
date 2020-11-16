@@ -11,11 +11,11 @@ jobs:
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train')
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Retrieve release-train branch
       run: |
         npm install compare-versions
         echo "RELEASE_TRAIN_BRANCH=$(node scripts/get_last_release_branch.js )" >> $GITHUB_ENV
-    - uses: actions/checkout@v2
     - name: pull-request
       if:   ${{ env.RELEASE_TRAIN_BRANCH }} != ''
       uses: repo-sync/pull-request@v2
