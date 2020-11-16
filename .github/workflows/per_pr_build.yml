@@ -15,7 +15,7 @@ jobs:
       run: |
         curl --request POST  https://tc.dbm.q2w.spin.pm/app/rest/buildQueue \
                 --header "Content-Type:application/xml" \
-                --header "Authorization: Bearer env.TEAMCITY_BUILD_TOKEN" \
+                --header "Authorization: Bearer ${{ secrets.TEAMCITY_BUILD_TOKEN }}" \
                 -d "<build><buildType id=\"DevOps_Sandbox_PerPullRequestSandboxEnvironment\"/><properties><property name=\"env.GITHUB_REF\" value=\"$GITHUB_REF\"/></properties></build>"
     - name: Slack Notification (TODO enter proper data)
       uses: rtCamp/action-slack-notify@master
