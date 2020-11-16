@@ -1,6 +1,9 @@
 var child_process = require("child_process")
 var compareVersions = require("compare-versions")
 
+const reviewers = "../prmeta.json"
+const prMeta = require(reviewers)
+
 async function getBranchArray() {
   var test = child_process.execSync("git branch --remote -a | grep release")
   var branches = test
@@ -39,7 +42,14 @@ async function main() {
   var array = await getBranchArray()
   var lastReleaseBranch = await getLastReleaseBranch(array)
 
-  console.log(lastReleaseBranch)
+  var matrixJson = { "include": [ {
+	"latest_release_branch": lastReleaseBranch,
+	"reviewers": prMeta.prReviewers,
+	"assignees": prMeta.prAssignees
+  }] }
+
+
+  console.log(matrixJson)
 }
 
 main()
