@@ -3,7 +3,7 @@ name: Create pull request to release train branch.
 on:
   pull_request:
     branches:
-      - 'release_**'
+      - release_*
     types: [created]
 
 jobs:
