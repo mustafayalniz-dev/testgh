@@ -42,7 +42,7 @@ async function main() {
   var array = await getBranchArray()
   var lastReleaseBranch = await getLastReleaseBranch(array)
 
-  var matrixJson = '{' + '"latest_release_branch": "' + lastReleaseBranch + '", "reviewers": "' + prMeta.prReviewers + '", "assignees": "' + prMeta.prAssignees + '"}"'
+  var matrixJson = '{' + '"latest_release_branch": "' + lastReleaseBranch + '", "reviewers": "' + prMeta.prReviewers + '", "assignees": "' + prMeta.prAssignees + '" }'
 
   matrixJson = '{ "include": [' + matrixJson + "] }"
 
