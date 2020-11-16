@@ -1,5 +1,5 @@
 var child_process = require("child_process")
-var compareVersions = require('compare-versions');
+var compareVersions = require("compare-versions")
 
 //const GITHUB_REF = process.env.GITHUB_REF
 //const currentBranch = GITHUB_REF.replace("refs/heads/", "")
@@ -16,9 +16,7 @@ if (currentBranch === "") {
 
 const versionNumber = currentBranch.replace(/release\_(\d+\.\d+\.\d+)/, "$1")
 
-
 async function getBranchArray() {
-
   var test = child_process.execSync("git branch --remote -a | grep release")
   var branches = test
     .toString()
@@ -33,15 +31,15 @@ async function getBranchArray() {
 async function getMinorVersionArray(array) {
   var matrixJson = ""
 
-  var releaseBranchRegex = new RegExp("^release_[0-9]+\.[0-9]+\.[0-9]+$");
+  var releaseBranchRegex = new RegExp("^release_[0-9]+.[0-9]+.[0-9]+$")
 
   array.forEach(function (item) {
-    if (! releaseBranchRegex.test(item)) {
-	return 
+    if (!releaseBranchRegex.test(item)) {
+      return
     }
     var versionNumberInRemote = item.replace(/release\_(\d+\.\d+\.\d+)/, "$1")
 
-    if ( compareVersions(versionNumber, versionNumberInRemote) === -1 ) {
+    if (compareVersions(versionNumber, versionNumberInRemote) === -1) {
       if (matrixJson != "") {
         matrixJson = matrixJson + ","
       }
