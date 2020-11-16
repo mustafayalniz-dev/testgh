@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Retrieve release-train branch
-      run: echo "RELEASE_TRAIN_BRANCH=$(node scripts/get_last_release_branch.js )" >> $GITHUB_ENV
+      run: |
+        npm install compare-versions
+        echo "RELEASE_TRAIN_BRANCH=$(node scripts/get_last_release_branch.js )" >> $GITHUB_ENV
     - uses: actions/checkout@v2
     - name: pull-request
       if:   ${{ env.RELEASE_TRAIN_BRANCH }} != ''
