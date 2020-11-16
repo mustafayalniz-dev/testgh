@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           fetch-depth: 0
       - uses: actions/setup-node@v1
       - run: git config user.name github-actions
@@ -24,10 +24,9 @@ jobs:
       - name: Set matrix for build
         id: set-matrix
         run: |
-          npm install compare-versions
           (( $(( (`date +\%s` / 604800 + 1) % 2 )) )) && node scripts/upstream_list.js ${{ github.base_ref }} ${{  github.head_ref }}
           echo "::set-output name=matrix::$( node scripts/upstream_list.js ${{ github.base_ref }} )"
-  merge-upstream-request:
+  merge-upstream-release:
     name: Pull Request to Upstream Release "${{ matrix.upstream_release }}"
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
     needs: generate-matrix
@@ -44,13 +43,13 @@ jobs:
           from_branch: ${{  github.head_ref }}
           target_branch: ${{ matrix.upstream_release }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-  pull-request-develop:
+  merge-to-develop:
     name: Pull Request to Develop Branch
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Merge ${{  github.head_ref }} -> ${{ matrix.upstream_release }}
+      - name: Merge ${{  github.head_ref }} -> develop
         if:   ${{ matrix.upstream_release }} != ''
         uses: devmasx/merge-branch@v1.3.1
         with:
