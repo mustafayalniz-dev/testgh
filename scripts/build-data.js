@@ -27,16 +27,16 @@ async function buildDataFromJiraAndPushToAdmin() {
   }
 
   console.log(payload)
-  const token_response = await getJWT()
+//  const token_response = await getJWT()
 
-  try {
-    JSON.parse(token_response)
-  } catch (e) {
-    console.log("Invalid Token Received")
-    return false
-  }
-  const jwt = token_response.json().jwt
-  await postPayloadToAdmin(jwt, payload)
+//  try {
+//    JSON.parse(token_response)
+//  } catch (e) {
+//    console.log("Invalid Token Received")
+//    return false
+//  }
+//  const jwt = token_response.json().jwt
+//  await postPayloadToAdmin(jwt, payload)
 }
 
 async function getJiraTickets() {
