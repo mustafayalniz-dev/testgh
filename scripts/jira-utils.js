@@ -24,6 +24,7 @@ module.exports = {
   transitionUrl: "/transitions",
   browseUrl: "/browse/",
 
+  jiraTransitionIdProductReleaseReady: 23,
   jiraTransitionIdReadyForQA: 341,
   jiraTransitionIdEngApproved: 321,
   jiraTransitionIdReadyForQAPAY: 0, // TODO: convert PAY to standard workflow
@@ -122,6 +123,28 @@ module.exports = {
     )
     const releaseUrlResponseJson = await releaseUrlResponse.json()
     return releaseUrlResponseJson
+  },
+
+  isEngineeringNoQA: async function (issue_id) {
+    const jqlSearch = encodeURIComponent(
+      `project = "${
+        this.projectName
+      }" AND fixVersion = "${this.releaseName()}" AND issueKey="${issue_id}" AND labels in ( "${
+        this.engineeringNoQALabel
+      }" )`
+    )
+
+    const jqlSearchUrl = this.jqlSearchBaseUrl + jqlSearch
+    const searchResponse = await fetch(`${this.baseUrl}${jqlSearchUrl}`, {
+      headers: this.headersWithAuth({}),
+    })
+    const searchResponseJson = await searchResponse.json()
+
+    if (Object.keys(searchResponseJson.issues).length > 0) {
+      return true
+    }
+
+    return false
   },
 
   listLinkedIssuesForProjectVersionWrappedByLabel: async function () {
