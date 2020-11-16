@@ -11,7 +11,7 @@ jobs:
     if: contains(github.event.pull_request.body, '/sandbox-create')
     runs-on: ubuntu-latest
     steps:
-    - name Invoke TeamCity build to provision and deploy environment 
+    - name: Invoke TeamCity build to provision and deploy environment 
       run: |
         curl --request POST  https://tc.dbm.q2w.spin.pm/app/rest/buildQueue \
                 --header "Content-Type:application/xml" \
