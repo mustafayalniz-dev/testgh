@@ -1,0 +1,35 @@
+name: Create pull request to release train branch.
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [closed]
+
+jobs:
+  release-train-sync:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Retrieve release-train branch
+      run: echo "RELEASE_TRAIN_BRANCH=$(node scripts/get_last_release_branch.js )" >> $GITHUB_ENV
+    - uses: actions/checkout@v2
+    - name: pull-request
+      if:   ${{ env.RELEASE_TRAIN_BRANCH }} != ''
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: ${{  github.head_ref }}
+        destination_branch: ${{ env.RELEASE_TRAIN_BRANCH }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pr_title: "Pulling ${{ github.head_ref }} into ${{ env.RELEASE_TRAIN_BRANCH }} "
+        pr_body: "*An automated PR for Release Train Branch ${{ env.RELEASE_TRAIN_BRANCH }} * "
+        pr_reviewer: "mluedke2,sejalbiren,spin-org/devops"
+        pr_assignee: "mluedke2,sejalbiren,spin-org/devops"
+    - name: Slack Notification (TODO enter proper data)
+      uses: rtCamp/action-slack-notify@master
+      env:
+        SLACK_CHANNEL: qa
+        SLACK_MESSAGE: 'New Pull Request created for Release Train branch .'
+        SLACK_TITLE: 'Automated PR to Release Train'
+        SLACK_USERNAME: qa
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
