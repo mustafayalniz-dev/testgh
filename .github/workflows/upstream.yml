@@ -7,7 +7,7 @@ on:
 
 jobs:
   generate-matrix:
-    name: Generate matrix for pull requests
+    name: Generate matrix for merge action of ${{  github.head_ref }}
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
     runs-on: ubuntu-latest
     outputs:
@@ -27,8 +27,8 @@ jobs:
           npm install compare-versions
           (( $(( (`date +\%s` / 604800 + 1) % 2 )) )) && node scripts/upstream_list.js ${{ github.base_ref }} ${{  github.head_ref }}
           echo "::set-output name=matrix::$( node scripts/upstream_list.js ${{ github.base_ref }} )"
-  merge-upstream-request:
-    name: Pull Request to Upstream Release "${{ matrix.upstream_release }}"
+  merge-upstream-release:
+    name: Merge ${{  github.head_ref }} to Upstream Release "${{ matrix.upstream_release }}"
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
     needs: generate-matrix
     strategy:
@@ -45,7 +45,7 @@ jobs:
           target_branch: ${{ matrix.upstream_release }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
   merge-to-develop:
-    name: Pull Request to Develop Branch
+    name: Merge ${{  github.head_ref }} to Develop Branch
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
     runs-on: ubuntu-latest
     steps:
