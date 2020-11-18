@@ -1,4 +1,4 @@
-name: Create upstream pull request
+name: Create Jira Comment with all commit details in Push
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   push:
-    name: Push Event
+    name: Jira Comment Event with commit details
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
