@@ -11,8 +11,17 @@ async function main() {
 main()
 
 async function buildDataFromJiraAndPushToAdmin() {
-  const issues = await getJiraTickets()
-  const linkedIssues = await getLinkedIssues()
+  var statuses = [
+    "Build Ready",
+    "Product QA Ready",
+    "Product QA In Progress",
+    "Product Release Ready",
+    "Product QA Blocked",
+    "Released",
+  ]
+
+  const issues = await getJiraTickets(statuses)
+  const linkedIssues = await getLinkedIssues(statuses)
   var allIssues = await issues.concat(linkedIssues)
   const releaseUrl = await getReleaseUrl()
 
@@ -27,7 +36,6 @@ async function buildDataFromJiraAndPushToAdmin() {
   }
 
   console.log(payload)
-
 //  const token_response = await getJWT()
 
 //  try {
@@ -57,19 +65,11 @@ async function transitionIssues(issues) {
   })
 }
 
-async function getJiraTickets() {
+async function getJiraTickets(statuses) {
   await jiraUtils.loadJiraCredentials()
   const ticketsRDE = await jiraUtils.listForTicketsForProject(jiraUtils.projectName)
 
   var issueURLList = []
-  var statuses = [
-    "Build Ready",
-    "Product QA Ready",
-    "Product QA In Progress",
-    "Product Release Ready",
-    "Product QA Blocked",
-    "Released",
-  ]
 
   for (var key in ticketsRDE.issues) {
     if (statuses.includes(ticketsRDE.issues[key].fields.status.name)) {
@@ -98,8 +98,8 @@ async function getReleaseUrl() {
   return releaseInformation
 }
 
-async function getLinkedIssues() {
-  const linkedIssueList = await jiraUtils.listLinkedIssuesForProjectVersionWrappedByLabel()
+async function getLinkedIssues(statuses) {
+  const linkedIssueList = await jiraUtils.listLinkedIssuesForProjectVersionWrappedByLabel(statuses)
   var linkedIssueURLList = []
   for (var key in linkedIssueList) {
     var issueURL = jiraUtils.baseUrl + jiraUtils.browseUrl + linkedIssueList[key]

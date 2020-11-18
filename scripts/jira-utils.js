@@ -147,7 +147,30 @@ module.exports = {
     return false
   },
 
-  listLinkedIssuesForProjectVersionWrappedByLabel: async function () {
+  isReleaseReady: async function (issue_id) {
+    const jqlSearch = encodeURIComponent(
+      `project = "${
+        this.projectName
+      }" AND fixVersion = "${this.releaseName()}" AND issueKey="${issue_id}" AND status="Product Release Ready" )`
+    )
+
+    const jqlSearchUrl = this.jqlSearchBaseUrl + jqlSearch
+    const searchResponse = await fetch(`${this.baseUrl}${jqlSearchUrl}`, {
+      headers: this.headersWithAuth({}),
+    })
+    const searchResponseJson = await searchResponse.json()
+
+    if (searchResponseJson.issues === undefined) {
+      return false
+    }
+    if (Object.keys(searchResponseJson.issues).length > 0) {
+      return true
+    }
+
+    return false
+  },
+
+  listLinkedIssuesForProjectVersionWrappedByLabel: async function (statuses) {
     const jqlSearch = encodeURIComponent(
       `project = "${this.projectName}" AND fixVersion = "${this.releaseName()}" AND labels in ( "${
         this.growthLabel
@@ -160,15 +183,6 @@ module.exports = {
     const searchResponseJson = await searchResponse.json()
 
     let linkedIssues = []
-
-    var statuses = [
-      "Build Ready",
-      "Product QA Ready",
-      "Product QA In Progress",
-      "Product Release Ready",
-      "Product QA Blocked",
-      "Released",
-    ]
 
     for (var issue in searchResponseJson.issues) {
       if (!statuses.includes(searchResponseJson.issues[issue].fields.status.name)) {
